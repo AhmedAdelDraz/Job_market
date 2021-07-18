@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Jobs in The Market</title>
+    <style>
+        table{
+    border-collapse: collapse;
+    font-family: Tahoma, Geneva, sans-serif;
+    }
+    table td {
+    padding: 11px;
+    }
+    table thead td {
+    background-color: #54585d;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 11px;
+    border: 1px solid #54585d;
+    }
+    table tbody td {
+    text-align: center;
+    color: #636363;
+    border: 1px solid #dddfe1;
+    }
+    table tbody tr {
+    background-color: #f9fafb;
+    }
+    table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+    }
+    </style>
+</head>
+<body>
+<h1 align="center">The jobs available in the market</h1>
+<table align="center">
+    <thead>
+    <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Company</th>
+        <th scope="col">Location</th>
+        <th scope="col">Type</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="job:${jobs}">
+        <td th:text="${job.title}"/>
+        <td th:text="${job.company}"/>
+        <td th:text="${job.location}"/>
+        <td th:text="${job.type}"/>
+    </tr>
+    </tbody>
+
+</table>
+</body>
+</html>
