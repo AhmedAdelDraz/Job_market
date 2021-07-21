@@ -45,6 +45,7 @@ public final class WuzzufJobs implements DAOJobs {
         df = dfFrameReader.csv(PATH);
         jobsRDD = df.toJavaRDD().map(Utilities::toJob).cache();
         clean();
+        CreatMinYearsExp();
     }
     
     public static WuzzufJobs getInstance(){
@@ -65,8 +66,8 @@ public final class WuzzufJobs implements DAOJobs {
     }
 
     @Override
-    public JavaRDD<Job> getJobs() {
-        return jobsRDD;
+    public List<Job> getJobs() {
+        return jobsRDD.collect();
     }
     
     @Override
@@ -75,10 +76,20 @@ public final class WuzzufJobs implements DAOJobs {
     }
 
     @Override
-    public Dataset<Row> summary() {
+    public List<List<Object>> summary() {
         df.printSchema();
-        df.summary("count", "min", "25%", "75%", "max").show();
-        return df.summary("count", "min", "25%", "75%", "max");
+        df.summary("count", "min", "max").show();
+        List<Row> summary = df.summary("count", "min", "max").collectAsList();
+        List<List<Object>> result = new ArrayList<>();
+        for(Row row : summary) 
+        {
+            List<Object> lst = new ArrayList<>();
+            for(int i = 0; i < row.size(); i++){
+                lst.add(row.get(i));
+            }
+            result.add(lst);
+        }
+        return result;
     }
     
     @Override
@@ -86,14 +97,9 @@ public final class WuzzufJobs implements DAOJobs {
         df.show(n);
     }
     
-    private List<List<Object>> helperMap(JavaRDD<String> input) {
-        Map<String, Long> wordCounts = input.countByValue();
-        List<Map.Entry> sorted = wordCounts.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .collect (Collectors.toList());
+    private List<List<Object>> mapToObjectsList(List<Map.Entry> mylist) {
         List<List<Object>> result = new ArrayList<>();
-        for(Map.Entry<String, Long> entry : sorted) 
+        for(Map.Entry entry : mylist) 
         {
             List<Object> lst = new ArrayList<>();
             lst.add(entry.getKey());
@@ -101,6 +107,15 @@ public final class WuzzufJobs implements DAOJobs {
             result.add(lst);
         }
         return result;
+    }
+    
+    private List<List<Object>> helperMap(JavaRDD<String> input) {
+        Map<String, Long> wordCounts = input.countByValue();
+        List<Map.Entry> sorted = wordCounts.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+        return mapToObjectsList(sorted);
 }
 
     @Override
@@ -119,7 +134,7 @@ public final class WuzzufJobs implements DAOJobs {
     }
 
     @Override
-    public List<Map.Entry<String, Long>> getSkillList() {
+    public List<List<Object>> getSkillList() {
         JavaRDD<String> skills = jobsRDD.map(j -> j.getSkills());                                  
         JavaRDD<String> words = skills.
                 flatMap (title -> Arrays.asList (title
@@ -128,11 +143,13 @@ public final class WuzzufJobs implements DAOJobs {
                                                 .split ("\\s*\\p{Punct}\\s*"))
                                                 .iterator())
                                                 .filter(StringUtils::isNotBlank);
-        return words.countByValue()
+        List<Map.Entry> sorted = words.countByValue()
                 .entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect (Collectors.toList());
+        return mapToObjectsList(sorted);
+        
     }
     
     @Override
@@ -144,6 +161,11 @@ public final class WuzzufJobs implements DAOJobs {
     @Override
     public long size() {
         return jobsRDD.count();
+    }
+    
+    @Override
+    public String[] columns() {
+        return df.columns();
     }
     
 }

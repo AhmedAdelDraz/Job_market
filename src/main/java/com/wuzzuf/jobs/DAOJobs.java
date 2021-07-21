@@ -17,14 +17,16 @@ import org.apache.spark.sql.Row;
  */
 public interface DAOJobs {
     public void clean();
-    public JavaRDD<Job> getJobs();
+    public List<Job> getJobs();
     public List<Job> getJobs(int n);
-    public long size();
-    public Dataset<Row> summary();
+    public List<List<Object>> summary();
     public void show(int n);
     public List<List<Object>> jobsPerCompany();
     public List<List<Object>> mostJobTitles();
     public List<List<Object>> mostPopularAreas();
-    public List<Map.Entry<String, Long>> getSkillList();
+    public List<List<Object>> getSkillList();
     public void CreatMinYearsExp();
+    
+    public long size();
+    public String[] columns();
 }
