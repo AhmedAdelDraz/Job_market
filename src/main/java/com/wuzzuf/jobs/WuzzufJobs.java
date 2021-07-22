@@ -64,14 +64,10 @@ public final class WuzzufJobs implements DAOJobs {
         df = df.na().drop();
         System.out.println ("Count : " + df.count());
     }
-
-    @Override
-    public List<Job> getJobs() {
-        return jobsRDD.collect();
-    }
     
     @Override
     public List<Job> getJobs(int n) {
+        if (n == 0) return jobsRDD.collect();
         return jobsRDD.take(n);
     }
 
@@ -97,7 +93,7 @@ public final class WuzzufJobs implements DAOJobs {
         df.show(n);
     }
     
-    private List<List<Object>> mapToObjectsList(List<Map.Entry> mylist) {
+    private List<List<Object>> mapToObjectsList(List<Map.Entry> mylist, int n) {
         List<List<Object>> result = new ArrayList<>();
         for(Map.Entry entry : mylist) 
         {
@@ -106,35 +102,36 @@ public final class WuzzufJobs implements DAOJobs {
             lst.add(entry.getValue());
             result.add(lst);
         }
-        return result;
+        if (n == 0) return result;
+        return result.stream().limit(n).collect(Collectors.toList());
     }
     
-    private List<List<Object>> helperMap(JavaRDD<String> input) {
+    private List<List<Object>> helperMap(JavaRDD<String> input, int n) {
         Map<String, Long> wordCounts = input.countByValue();
         List<Map.Entry> sorted = wordCounts.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toList());
-        return mapToObjectsList(sorted);
+        return mapToObjectsList(sorted, n);
 }
 
     @Override
-    public List<List<Object>> jobsPerCompany() {
-        return helperMap(jobsRDD.map(j -> j.getCompany()));
+    public List<List<Object>> jobsPerCompany(int n) {
+        return helperMap(jobsRDD.map(j -> j.getCompany()), n);
     }
 
     @Override
-    public List<List<Object>> mostJobTitles() {
-        return helperMap(jobsRDD.map(j -> j.getTitle()));
+    public List<List<Object>> mostJobTitles(int n) {
+        return helperMap(jobsRDD.map(j -> j.getTitle()), n);
     }
 
     @Override
-    public List<List<Object>> mostPopularAreas() {
-        return helperMap(jobsRDD.map(j -> j.getLocation()));
+    public List<List<Object>> mostPopularAreas(int n) {
+        return helperMap(jobsRDD.map(j -> j.getLocation()), n);
     }
 
     @Override
-    public List<List<Object>> getSkillList() {
+    public List<List<Object>> getSkillList(int n) {
         JavaRDD<String> skills = jobsRDD.map(j -> j.getSkills());                                  
         JavaRDD<String> words = skills.
                 flatMap (title -> Arrays.asList (title
@@ -148,7 +145,7 @@ public final class WuzzufJobs implements DAOJobs {
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect (Collectors.toList());
-        return mapToObjectsList(sorted);
+        return mapToObjectsList(sorted, n);
         
     }
     
