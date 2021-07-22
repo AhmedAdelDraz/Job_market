@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.wuzzuf.jobs;
+package com.project.jobmarket.domain;
 
 import java.util.List;
 

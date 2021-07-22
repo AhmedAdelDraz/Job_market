@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.wuzzuf.jobs;
+package com.project.jobmarket.domain;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.project.jobmarket.domain.Job;
 import org.apache.spark.sql.Row;
 
 /**

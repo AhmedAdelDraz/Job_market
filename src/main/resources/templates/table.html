@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Charts With Thymeleaf</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script th:inline="javascript">
+
+
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(drawTable);
+
+      var records = [[${jobs}]]
+
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Title');
+        data.addColumn('string', 'Company');
+        data.addColumn('string', 'Location');
+        data.addColumn('string', 'Type');
+        data.addColumn('string', 'Level');
+        data.addColumn('string', 'Yearsexp');
+        data.addColumn('string', 'Country');
+        data.addColumn('string', 'Skills');
+        data.addColumn('string', 'minYear');
+
+        records.forEach((record) => {
+          data.addRow([record.title,
+                       record.company,
+                       record.location,
+                       record.type,
+                       record.level,
+                       record.yearsExp,
+                       record.country,
+                       record.skills,
+                       record.minYear]);});
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+
+        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+      }
+    </script>
+</head>
+<body>
+<div id="table_div"></div>
+</body>
+</html>

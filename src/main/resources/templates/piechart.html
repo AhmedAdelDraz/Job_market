@@ -1,34 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="https://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Google Charts With Thymeleaf</title>
   <!--Load the AJAX API-->
+
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript">
-
-        // Load the Visualization API and the corechart package.
+  <script th:inline="javascript">
+        /**
+         *
+         * @author Draz
+         */
         google.charts.load('current', {'packages':['corechart']});
-
-        // Set a callback to run when the Google Visualization API is loaded.
         google.charts.setOnLoadCallback(drawChart);
 
-        // Callback that creates and populates a data table,
-        // instantiates the pie chart, passes in the data and
-        // draws it.
+        var records = [[${chartData}]]
         function drawChart() {
 
             // Create the data table.
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Topping');
             data.addColumn('number', 'Slices');
-            data.addRows([[${chartData}]]);
+            for(i = 0; i < records.length; i++)
+              data.addRow([records[i][0], records[i][1]]);
 
-            // Set chart options
-            var options = {'title':'Jobs for each Company',
+            var options = {'title':'Vacancies per Company',
             is3D: true};
 
-            // Instantiate and draw our chart, passing in some options.
             var chart = new google.visualization.PieChart(document.getElementById('piechart'));
             chart.draw(data, options);
         }
