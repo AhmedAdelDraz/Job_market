@@ -196,8 +196,6 @@
     <orderEntry type="library" name="Maven: net.sf.py4j:py4j:0.10.9" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-crypto:1.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.spark:spark-catalyst_2.12:3.1.2" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.janino:janino:3.1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.janino:commons-compiler:3.1.4" level="project" />
     <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.8-1" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.15" level="project" />
     <orderEntry type="library" name="Maven: org.apache.arrow:arrow-vector:2.0.0" level="project" />
@@ -259,5 +257,7 @@
     <orderEntry type="library" name="Maven: org.attoparser:attoparser:2.0.5.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.unbescape:unbescape:1.1.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.janino:janino:3.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.janino:commons-compiler:3.1.4" level="project" />
   </component>
 </module>

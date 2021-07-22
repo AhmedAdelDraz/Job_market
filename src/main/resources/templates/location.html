@@ -14,25 +14,19 @@
         google.charts.load('current', {'packages':['corechart', 'bar']});
         google.charts.setOnLoadCallback(drawBasic);
 
-        var records = [[${titleCount}]]
+        var records = [[${areaCount}]]
         function drawBasic() {
             // Create the data table.
             var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Title');
-            data.addColumn('number', 'Vacancies');
+            data.addColumn('string', 'Location');
+            data.addColumn('number', 'vacancies');
             for(i = 0; i < records.length; i++)
               data.addRow([records[i][0], records[i][1]]);
 
           var options = {
-            title: 'Number of vacancies per certain title',
-            hAxis: {
-                  title: 'Count',
-                    minValue: 0
-                   },
-            vAxis: {
-                  title: 'Title'
-                  }
-              };
+            title: 'Number of vacancies per locations',
+            hAxis: {title: 'vacancies',minValue: 0},
+            vAxis: {title: 'Location'}};
 
             var chart = new google.visualization.BarChart(document.getElementById('barchart'));
             chart.draw(data, options);
