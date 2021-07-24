@@ -1,24 +1,47 @@
-<html>
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
 <head>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript">
-      google.charts.load('current', {'packages':['table']});
-      google.charts.setOnLoadCallback(drawTable);
-
-      function drawTable() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('number', 'Count');
-        data.addColumn('number', 'Std');
-        data.addColumn('number', 'Mean');
-        data.addRows([${summaries}]);
-
-        var table = new google.visualization.Table(document.getElementById('table_div'));
-
-        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
-      }
-    </script>
+  <meta charset="UTF-8">
+  <title>All Jobs in The Market</title>
+  <style>
+        table{
+    border-collapse: collapse;
+    font-family: Tahoma, Geneva, sans-serif;
+    }
+    table td {
+    padding: 11px;
+    }
+    table thead td {
+    background-color: #54585d;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 11px;
+    border: 1px solid #54585d;
+    }
+    table tbody td {
+    text-align: center;
+    color: #636363;
+    border: 1px solid #dddfe1;
+    }
+    table tbody tr {
+    background-color: #f9fafb;
+    }
+    table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+    }
+    </style>
 </head>
 <body>
-<div id="table_div"></div>
+<table>
+  <thead>
+  </thead>
+  <tbody>
+  <tr th:each="record:${summary}">
+    <td th:text="${record[0]}"/>
+    <td th:text="${record[1]}"/>
+  </tr>
+  </tbody>
+
+</table>
 </body>
 </html>

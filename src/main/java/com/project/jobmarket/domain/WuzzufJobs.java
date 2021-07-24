@@ -20,20 +20,21 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author fady
  */
-public final class WuzzufJobs implements DAOJobs {
+@Component
+public class WuzzufJobs implements DAOJobs {
     
-    private static WuzzufJobs instance;
     private Dataset<Row> df;
     private final String PATH = "Wuzzuf_Jobs.csv";
     private final JavaRDD<Job> jobsRDD;
     private final SparkSession sparkSession;
     
-    private WuzzufJobs() {
+    public WuzzufJobs() {
         Logger.getLogger("org").setLevel(Level.OFF);
         Logger.getLogger("akka").setLevel(Level.OFF);
         sparkSession = SparkSession
@@ -47,12 +48,6 @@ public final class WuzzufJobs implements DAOJobs {
         jobsRDD = df.toJavaRDD().map(Utilities::toJob).cache();
         clean();
         CreatMinYearsExp();
-    }
-    
-    public static WuzzufJobs getInstance(){
-       if(instance == null)
-           instance = new WuzzufJobs();
-       return instance;
     }
 
     @Override
@@ -74,19 +69,14 @@ public final class WuzzufJobs implements DAOJobs {
 
     @Override
     public List<List<Object>> summary() {
-        df.printSchema();
-        df.summary("count", "min", "max").show();
-        List<Row> summary = df.summary("count", "min", "max").collectAsList();
-        List<List<Object>> result = new ArrayList<>();
-        for(Row row : summary) 
-        {
-            List<Object> lst = new ArrayList<>();
-            for(int i = 0; i < row.size(); i++){
-                lst.add(row.get(i));
-            }
-            result.add(lst);
-        }
-        return result;
+        return Arrays.asList(
+                Arrays.asList("rows",df.count()),
+                Arrays.asList("columns",this.columns().length),
+                Arrays.asList("companies",this.jobsPerCompany((int)this.size()).stream().count()),
+                Arrays.asList("titles",this.mostJobTitles((int)this.size()).stream().count()),
+                Arrays.asList("locations",this.mostPopularAreas((int)this.size()).stream().count()),
+                Arrays.asList("skills",this.getSkillList((int)this.size()).stream().count())
+        );
     }
     
     @Override
@@ -162,8 +152,6 @@ public final class WuzzufJobs implements DAOJobs {
     }
     
     @Override
-    public String[] columns() {
-        return df.columns();
-    }
-    
+    public String[] columns() { return df.columns(); }
+
 }
