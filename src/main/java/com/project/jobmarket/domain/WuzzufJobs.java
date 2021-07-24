@@ -159,8 +159,8 @@ public class WuzzufJobs implements DAOJobs {
     
     @Override
     public void KMeans(int numClusters) {
-        String inputColumns[] = {"title", "country"};
-        String indexedColumns[] = {"title_index", "country_index"};
+        String inputColumns[] = {"title", "company"};
+        String indexedColumns[] = {"title_index", "company_index"};
         Dataset<Row> sampleIndexedDf = new StringIndexer()
                 .setInputCols(inputColumns)
                 .setOutputCols(indexedColumns)
