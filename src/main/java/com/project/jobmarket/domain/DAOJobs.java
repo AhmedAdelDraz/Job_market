@@ -21,7 +21,8 @@ public interface DAOJobs {
     public List<List<Object>> mostPopularAreas(int n);
     public List<List<Object>> getSkillList(int n);
     public void CreatMinYearsExp();
-    
     public long size();
     public String[] columns();
+    public void KMeans(int numClusters);
+    public List<Integer> getPredictions(int n);
 }
