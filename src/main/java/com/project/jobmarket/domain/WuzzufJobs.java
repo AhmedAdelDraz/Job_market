@@ -14,12 +14,15 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.DataFrameReader;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import org.apache.log4j.Logger;
-import org.apache.log4j.Level;
+import org.apache.spark.ml.feature.StringIndexer;
+import org.apache.spark.ml.feature.VectorAssembler;
+import org.apache.spark.ml.clustering.KMeansModel;
+import org.apache.spark.ml.clustering.KMeans;
 
 /**
  *
@@ -32,10 +35,9 @@ public final class WuzzufJobs implements DAOJobs {
     private final String PATH = "Wuzzuf_Jobs.csv";
     private final JavaRDD<Job> jobsRDD;
     private final SparkSession sparkSession;
+    private Dataset<Row> predictions;
     
     private WuzzufJobs() {
-        Logger.getLogger("org").setLevel(Level.OFF);
-        Logger.getLogger("akka").setLevel(Level.OFF);
         sparkSession = SparkSession
                 .builder()
                 .appName("Wuzzuf Jobs")
@@ -166,4 +168,32 @@ public final class WuzzufJobs implements DAOJobs {
         return df.columns();
     }
     
+    @Override
+    public void KMeans(int numClusters) {
+        String inputColumns[] = {"title", "country"};
+        String indexedColumns[] = {"title_index", "country_index"};
+        Dataset<Row> sampleIndexedDf = new StringIndexer()
+                .setInputCols(inputColumns)
+                .setOutputCols(indexedColumns)
+                .fit(df)
+                .transform(df);
+
+        VectorAssembler vectorAssembler = new VectorAssembler ();
+        vectorAssembler.setInputCols (indexedColumns);
+        vectorAssembler.setOutputCol ("features");
+        Dataset<Row> jobsTransform = vectorAssembler.transform(sampleIndexedDf);
+        
+        KMeans kmeans = new KMeans().setK(numClusters).setSeed(1L);
+        kmeans.setFeaturesCol("features");
+        KMeansModel model = kmeans.fit(jobsTransform);
+        
+        predictions = model.transform(jobsTransform);
+        predictions.show(10);
+    }
+
+    @Override
+    public List<Integer> getPredictions(int n) {
+        return predictions.toJavaRDD().map(r -> (int)r.getAs("prediction")).take(n);
+    }
+
 }
