@@ -24,5 +24,5 @@ public interface DAOJobs {
     public long size();
     public String[] columns();
     public void KMeans(int numClusters);
-    public List<Integer> getPredictions(int n);
+    public Integer getPrediction(int n);
 }

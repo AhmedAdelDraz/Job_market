@@ -35,7 +35,7 @@ public class WuzzufJobs implements DAOJobs {
     private final String PATH = "Wuzzuf_Jobs.csv";
     private final JavaRDD<Job> jobsRDD;
     private final SparkSession sparkSession;
-    private Dataset<Row> predictions;
+    private List<Integer> predictions;
     
     public WuzzufJobs() {
         sparkSession = SparkSession
@@ -53,13 +53,8 @@ public class WuzzufJobs implements DAOJobs {
 
     @Override
     public void clean() {
-        System.out.println ("Count : " + df.count());
-        System.out.println("Remove Duplicates");
         df = df.dropDuplicates();
-        System.out.println ("Count : " + df.count());
-        System.out.println("Remove Nulls");
         df = df.na().drop();
-        System.out.println ("Count : " + df.count());
     }
     
     @Override
@@ -176,13 +171,18 @@ public class WuzzufJobs implements DAOJobs {
         kmeans.setFeaturesCol("features");
         KMeansModel model = kmeans.fit(jobsTransform);
         
-        predictions = model.transform(jobsTransform);
-        predictions.show(10);
+        predictions = model.transform(jobsTransform).toJavaRDD()
+                .map(r -> (int)r.getAs("prediction")).collect();
     }
 
     @Override
-    public List<Integer> getPredictions(int n) {
-        return predictions.toJavaRDD().map(r -> (int)r.getAs("prediction")).take(n);
+    public Integer getPrediction(int index) {
+        return predictions.get(index);
     }
+
+    public List<Integer> getPrediction() {
+        return predictions;
+    }
+
 
 }

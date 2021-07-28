@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Google Charts With Thymeleaf</title>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script th:inline="javascript">
+    <meta charset="UTF-8">
+    <title>Google Charts With Thymeleaf</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script th:inline="javascript">
 
 
       google.charts.load('current', {'packages':['table']});
       google.charts.setOnLoadCallback(drawTable);
       var size = 20;
+      var clusters = [[${clusters}]];
       var records = [[${jobs}]];
 
       function drawTable() {
@@ -23,7 +24,8 @@
         data.addColumn('string', 'Country');
         data.addColumn('string', 'Skills');
         data.addColumn('string', 'minYear');
-
+        data.addColumn('string', 'cluster');
+        var i = 0;
         records.forEach((record) => {
           data.addRow([record.title,
                        record.company,
@@ -33,16 +35,17 @@
                        record.yearsExp,
                        record.country,
                        record.skills,
-                       record.minYear]);});
+                       record.minYear,
+                       clusters[i].toString()]);
+                       i=i+1;});
 
         var table = new google.visualization.Table(document.getElementById('table_div'));
 
         table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
       }
     </script>
-<style>
-
-.button1 {
+    <style>
+.button {
   border: none;
   color: white;
   border-radius: 12px;
@@ -54,41 +57,18 @@
   margin: 4px 2px;
   cursor: pointer;
 }
-.button1 {background-color: #008CBA;}
-.button1:hover {
-  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-}
-.button2 {
-  border: none;
-  color: white;
-  border-radius: 12px;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-}
-.button2 {background-color: #008CBA;}
-.button2:hover {
+.button {background-color: #008CBA;}
+.button:hover {
   box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
 
 </style>
 </head>
 <body>
-<div style="width: 100%;">
-<div style="width: 50%; height: 100px; float: left;">
-  <form>
-    <input type="button" class="button2" onclick="window.location.href='http://localhost:8081/data/jobs/clusters/10';" value="kmean" />
-  </form>
-</div>
-<div style="margin-left: 90%; height: 100px;">
-  <form>
-    <input type="button" class="button1" onclick="window.location.href='http://localhost:8081/data/jobs/summary';" value="Summary" />
-  </form>
-</div>
+<div align="right" id="summary">
+    <form>
+        <input type="button" class="button" onclick="window.location.href='http://localhost:8081/data/jobs/summary';" value="Summary" />
+    </form>
 </div>
 <div id="table_div"></div>
 </body>
