@@ -12,6 +12,7 @@ import java.util.List;
  * @author fady
  */
 public interface DAOJobs {
+    
     public void clean();
     public List<Job> getJobs(int n);
     public List<List<Object>> summary();
@@ -25,4 +26,5 @@ public interface DAOJobs {
     public String[] columns();
     public void KMeans(int numClusters);
     public Integer getPrediction(int n);
+    
 }
