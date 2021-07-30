@@ -13,5 +13,5 @@ import java.util.List;
 public class JobsTableService {
     @Autowired
     WuzzufJobs object;
-    public List<Job> getJobsRecords(){ return object.getJobs(10);}
+    public List<Job> getJobsRecords(int num){ return object.getJobs(num);}
 }

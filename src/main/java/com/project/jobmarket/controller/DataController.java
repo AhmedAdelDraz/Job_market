@@ -29,7 +29,7 @@ public class DataController {
 
     @GetMapping("/jobs/table")
     String getAllJobs(Model model){
-        model.addAttribute("jobs",jobsRecords.getJobsRecords());
+        model.addAttribute("jobs",jobsRecords.getJobsRecords(100));
         return "table";
     }
 
@@ -42,7 +42,7 @@ public class DataController {
     @GetMapping("/jobs/clusters/{clusterNumber}")
     String getCluster(@PathVariable("clusterNumber") int clusterNumber,Model model){
         model.addAttribute("clusters",jobsClusters.getCluster(clusterNumber));
-        model.addAttribute("jobs",jobsRecords.getJobsRecords());
+        model.addAttribute("jobs",jobsRecords.getJobsRecords(100));
         return "kmean";
     }
 }
